@@ -1,0 +1,17 @@
+global:
+    cpus: 2
+    mem: 2048
+    ip_pattern: '192.168.99.10'
+boxes:
+    nodevictim:
+        box:
+            box: 'centos/7'
+            default_root: 'vagrant'
+
+    nodeintruder:
+        box:
+            box: 'kalilinux/rolling'
+            default_root: 'kali'
+
+
+        
