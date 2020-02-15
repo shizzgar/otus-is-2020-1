@@ -1,0 +1,52 @@
+---
+- hosts: all
+  remote_user: vagrant
+  vars:
+    - password1: '$1$otus$r1zn5OzUCPg2mAasck4kR0'
+    - password2: '$1$otus2$FfshDzEpnE5oNptjTsJKC.'
+    - password3: '$1$otus$r1zn5OzUCPg2mAasck4kR0'
+ 
+  tasks:
+  - name: check if /dev/sdb1 exists
+    parted: device=/dev/sdb
+    become: yes
+    register: sdb_info
+
+  # - name: output sdb_info
+  #   debug: msg={{sdb_info}}
+
+  - name: create partition if not exists
+    parted: 
+      device: /dev/sdb
+      number: 1
+      state: present
+    become: yes
+    when: sdb_info.partitions[0] is not defined
+
+  - name: add test user 1 
+    user: 
+        name: otus111
+        password: "{{ password1 }}"
+        shell: /bin/bash
+        createhome: yes
+        append: yes
+    
+  - name: add test user 2
+    user: 
+      name: otus222
+      password: "{{ password1 }}"
+      shell: /bin/bash
+      createhome: yes
+      append: yes
+      
+  - name: add test user 3
+    user: 
+      name: otus333
+      password: "{{ password1 }}"
+      shell: /bin/bash
+      createhome: yes
+      append: yes
+
+
+          
+      

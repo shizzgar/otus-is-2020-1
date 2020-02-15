@@ -1,0 +1,25 @@
+global:
+    ip_pattern: '192.168.99.10'
+boxes:
+    nodevictim:
+        box:
+            box: 'centos/7'
+            default_root: 'vagrant'
+
+            cpus: 1
+            mem: 256
+            vdi_file: './sata_v.vdi'
+            vdi_size: 5
+
+    nodeintruder:
+        box:
+            box: 'kalilinux/rolling'
+            default_root: 'kali'
+
+            cpus: 2
+            mem: 2048
+#            vdi_file: './sata_i.vdi'
+#            vdi_size: 500
+
+
+        

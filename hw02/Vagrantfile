@@ -1,0 +1,82 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+VAGRANTFILE_API_VERSION=2
+
+CONFIG_FILE='boxes_config.yml'
+require='yaml'
+myRoot=File.dirname(__FILE__)
+if not Pathname(myRoot + "/" + CONFIG_FILE).exist?
+    fail "vagrant.yml not found"
+end
+
+vagrantCfg=YAML.load_file(myRoot + "/" + CONFIG_FILE)
+
+node_ip_pattern=vagrantCfg['global']['ip_pattern']||'192.168.254.'
+
+box_number=1
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+
+    box_count=0
+
+    #obtain boxes count
+    vagrantCfg['boxes'].each do |boxName, boxCfg|
+        box_count+=1
+    end    
+
+    #make host list - to put into /etc/hosts
+    hostList=Hash.new
+    vagrantCfg['boxes'].each do |boxName, boxCfg|
+        host_name=boxName#+'.local'
+        host_ip="#{node_ip_pattern}%d" % box_number
+        hostList[boxName]={'host'=>host_name,'ip'=>host_ip}
+        box_number+=1
+    end    
+
+    #do with each box in yml
+    vagrantCfg['boxes'].each do |boxName, boxCfg|
+        box_name=boxName
+        host_name=hostList[boxName]['host']
+        host_ip=hostList[boxName]['ip']
+        bx=boxCfg['box']
+
+        #define box and setup some props
+        config.vm.define box_name do |box|
+            box.vm.box=bx['box']
+            box.vm.hostname=host_name
+            box.vm.network :private_network, ip: host_ip
+
+            #setup HW props of provide
+            node_cpus=bx['cpus']||1
+            node_mem=bx['mem']||256
+            box.vm.provider "virtualbox" do |vbox|
+                vbox.memory=node_mem
+                vbox.cpus=node_cpus
+                if bx.key?('vdi_file')                
+                    unless File.exist?(bx['vdi_file'])
+                        puts "add sata 2nd time #{box_name}"
+                        vbox.customize ['createmedium', '--filename', bx['vdi_file'], '--size', bx['vdi_size'] * 1024]
+                        vbox.customize ["storagectl", :id, "--name", "SATA Controller", "--add", "sata" ]
+                        vbox.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 1, '--device', 0, '--type', 'hdd', '--medium',  bx['vdi_file']]
+                    end  
+                end
+            end
+
+            #provision with bootstrap.sh shell script
+            #box.vm.provision "shell", path: "bootstrap.sh", privileged: true, args: "#{bx['default_root']}"
+            box.vm.provision "ansible" do |ansible|
+                ansible.playbook="ansible/bootstrap.yml"
+                ansible.become=true
+            end    
+
+            #provision with hosts plugin - add all hosts from list to /etc/hosts
+            box.vm.provision :hosts do |hosts|
+                hostList.each do |host_name, host_item|
+                    hosts.add_host host_item['ip'], [host_item['host']]
+                end
+            end                    
+        end
+    end
+end                
+

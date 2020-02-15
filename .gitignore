@@ -2,4 +2,5 @@
 .vagrant/
 vagrant/
 trash/
+test/
 *.box
