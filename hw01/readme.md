@@ -9,4 +9,6 @@
 2. на основе образа kali/rolling (nodeintruder, ip 192.168.99.102)
 
 Конфиги для vm задаются в файле boxes_config.yml
-На стадии provision в каждой vm скриптом bootstrap.sh создаются 3 пользователя otus, otus2, otus3 с паролем vic!!vak и копируется конфигация ssh от дефолтного рута (vagrant для nodevictim, kali для nodeintruder), кроме того в файлы /etc/hosts прописываются ip:hostname обеих машин
+На стадии provision в каждой vm скриптом bootstrap.sh создаются 3 пользователя otus, otus2, otus3 с паролем vic!!vak и копируется конфигация ssh от дефолтного рута (vagrant для nodevictim, kali для nodeintruder), кроме того в файлы /etc/hosts прописываются ip:hostname обеих машин, необходима установка плагина vagrant-hosts: 
+
+```vagrant plugin install vagrant-hosts```
