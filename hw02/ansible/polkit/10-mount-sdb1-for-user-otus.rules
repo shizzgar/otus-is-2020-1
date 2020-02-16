@@ -1,0 +1,8 @@
+polkit.addRule(function(action, subject) {
+  polkit.log("mysubject:"+subject);  
+  if (action.id.match("org.freedesktop.udisks2.filesystem-mount-system") && 
+      (action.lookup("device")=="/dev/sdb1") &&
+      (subject.user=="otus")) {
+    return polkit.Result.YES;
+  }
+});

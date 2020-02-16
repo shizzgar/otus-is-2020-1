@@ -2,14 +2,21 @@
 - hosts: all
   remote_user: vagrant
   vars:
-    - password1: '$1$otus$r1zn5OzUCPg2mAasck4kR0'
-    - password2: '$1$otus2$FfshDzEpnE5oNptjTsJKC.'
-    - password3: '$1$otus$r1zn5OzUCPg2mAasck4kR0'
+    - password1: '$1$otus$H73n7J9kEP9Uu7qtgrOeY.'
+    - password2: '$1$otus2$MJ7TrWnDWc4oHQ8S.dv3k0'
+    - password3: '$1$otus3$aPFnydto.zF7lp8DxS9350'
+    - rules_dir: '/etc/polkit-1/rules.d'
+    - rule_to_allow_mount_for_otus111: './polkit/10-mount-sdb1-for-user-otus.rules'
  
   tasks:
+  - name: install udisks2
+    yum:
+      name: udisks2
+      state: present
+
   - name: check if /dev/sdb1 exists
     parted: device=/dev/sdb
-    become: yes
+    # become: yes
     register: sdb_info
 
   # - name: output sdb_info
@@ -20,12 +27,40 @@
       device: /dev/sdb
       number: 1
       state: present
-    become: yes
+    # become: yes
     when: sdb_info.partitions[0] is not defined
+
+  - name: create filesystem on /dev/sdb1
+    filesystem:
+      fstype: ext4 
+      dev: /dev/sdb1
+    
+  - name: check rules.d exists
+    stat:
+      path: "{{ rules_dir }}"
+    register: rules_dir_exists
+
+  - name: create rules.d if not exists
+    file:
+      path: "{{ rules_dir }}"
+      state: directory
+      mode: 0755
+      group: root
+      owner: root
+    when: rules_dir_exists.stat.exists  == false
+
+  - name: copy polkit rule to rules.d dir
+    copy:
+      src: "{{ rule_to_allow_mount_for_otus111 }}"
+      dest: "{{ rules_dir }}"
+      owner: root
+      group: root
+      mode: 0644
+
 
   - name: add test user 1 
     user: 
-        name: otus111
+        name: otus
         password: "{{ password1 }}"
         shell: /bin/bash
         createhome: yes
@@ -33,16 +68,16 @@
     
   - name: add test user 2
     user: 
-      name: otus222
-      password: "{{ password1 }}"
+      name: otus2
+      password: "{{ password2 }}"
       shell: /bin/bash
       createhome: yes
       append: yes
       
   - name: add test user 3
     user: 
-      name: otus333
-      password: "{{ password1 }}"
+      name: otus3
+      password: "{{ password3 }}"
       shell: /bin/bash
       createhome: yes
       append: yes
