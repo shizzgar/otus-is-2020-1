@@ -9,9 +9,12 @@
     - rule_to_allow_mount_for_otus111: './polkit/10-mount-sdb1-for-user-otus.rules'
  
   tasks:
-  - name: install udisks2
+  - name: install audit (for selinux, didn't installed by default in centos image), udisks2 (for lab), mc (for me)
     yum:
-      name: udisks2
+      name: 
+        - udisks2
+        - audit
+        - mc
       state: present
 
   - name: check if /dev/sdb1 exists
