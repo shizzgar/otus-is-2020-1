@@ -1,0 +1,33 @@
+
+#manage mount filesys (policy kit)
+- name: install the latest version of udisks2
+  yum:
+    name: udisks2
+    state: latest
+
+- name: check if /dev/sdb1 exists create partition if not exists
+  become: yes
+  parted: 
+    device: /dev/sdb
+    number: 1
+    state: present
+  when: sdb_info.partitions[0] is not defined
+  register: sdb_info
+  
+- name: Create a ext4 filesystem on /dev/sdb1 and check disk blocks
+  filesystem:
+    fstype: ext4
+    dev: /dev/sdb1
+
+- name: Copy mount rule
+  copy:
+    src: ../rules/0-udisks2.rules
+    dest: /etc/polkit-1/rules.d/10-udisks2.rules
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: add user Otus to groups disk 
+  user:
+    name: otus
+    groups: "disk"

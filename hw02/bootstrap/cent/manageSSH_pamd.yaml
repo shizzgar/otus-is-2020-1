@@ -1,0 +1,18 @@
+
+#manage ssh access via pam.d and time.conf
+- name: insert/update "Match User" configuration block in /etc/ssh/sshd_config
+  blockinfile:
+    path: /etc/security/time.conf
+    block: |
+      sshd;*;otus2;!Al0000-2400
+
+- name: pam.d | sshd
+  pamd:
+    name: sshd
+    type: account
+    control: required
+    module_path: pam_nologin.so      
+    new_type: account
+    new_control: required
+    new_module_path: pam_time.so
+    state: after

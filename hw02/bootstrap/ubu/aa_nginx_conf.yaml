@@ -1,0 +1,25 @@
+- name: Create the apparmor.d/containers directory if it does not exist
+  file:
+    path: /etc/apparmor.d/containers
+    state: directory
+    mode: '0755'
+
+- name: Copy APPARMOR nginx profile
+  copy:
+    src: ../rules/docker-nginx
+    dest: /etc/apparmor.d/containers/docker-nginx
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Add nginx apparmor profile
+  command: apparmor_parser -r -W /etc/apparmor.d/containers/docker-nginx
+
+- name: Re-create nginx container
+  docker_container:
+    name: aa-nginx
+    image: nginx
+    state: started
+    recreate: yes
+    security_opts: apparmor=docker-nginx
+    ports: "80:80"

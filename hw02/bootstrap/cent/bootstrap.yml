@@ -1,0 +1,26 @@
+
+- hosts: all
+  # connection: "local"
+  remote_user: vagrant
+  become: yes
+
+  vars:
+    - chroot_dir: '/var/chroot/otus3'
+    - chroot_user: 'otus3'    
+    - users:
+      - otus
+      - otus1
+      - otus2
+
+  handlers:
+    - name: "Restart sshd"
+      service:
+        name: "sshd"
+        state: "restarted"
+
+  tasks:
+    - include: ping_disableSSH.yaml
+    - include: user_manage.yaml
+    - include: udisk_policy.yaml
+    - include: manageSSH_pamd.yaml
+    - include: setup_chroot.yaml

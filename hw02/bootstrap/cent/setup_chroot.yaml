@@ -1,0 +1,50 @@
+- name: exec chroot script to remote
+  script:
+    cmd: chroot_env.sh {{ chroot_dir }} /bin/{ls,echo,cat,rm,bash,mkdir,touch,id} /usr/bin/vi /etc/hosts /etc/passwd /etc/group
+
+- name: Insert/Update "Match User" configuration block in /etc/ssh/sshd_config
+  blockinfile:
+    path: /etc/ssh/sshd_config
+    block: |
+        Match User {{ chroot_user }}
+            ChrootDirectory {{ chroot_dir }}
+
+- name: make user home dir
+  file:
+    path: '{{chroot_dir}}/home/{{ chroot_user }}'
+    state: directory
+    mode: 0755
+    owner: '{{ chroot_user }}'
+    # group: otus
+          
+- name: Set PATH in environment
+  lineinfile: 
+    dest: '{{ chroot_dir }}/home/otus3/environment'
+    state: present 
+    create: yes
+    # mode: 0644
+    # group: otus
+    # owner: '{{ chroot_user }}'
+    regexp: '^PATH' 
+    line: 'PATH=/bin;/usr/bin'    
+
+- name: Set PATH in .bashrc
+  lineinfile: 
+    dest: '{{ chroot_dir }}/home/{{ chroot_user }}/.bashrc'
+    state: present 
+    create: yes
+    # mode: 0644
+    # owner: '{{ chroot_user }}'
+    # group: otus
+    line: 'export PATH=/bin;/usr/bin'        
+
+- name: Set PATH in .bash_profile
+  lineinfile: 
+    dest: '{{ chroot_dir }}/home/{{ chroot_user }}/.bash_profile'
+    state: present 
+    create: yes
+    # mode: 0644
+    # owner: '{{ chroot_user }}'
+    # group: otus
+    line: 'export PATH=/bin;/usr/bin'   
+  notify: "Restart sshd"
