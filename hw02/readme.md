@@ -61,21 +61,21 @@ homework
 
 ### Проверка выполнения задания:
 * polkit:
-- ssh -i ./bootstrap/keys/otus otus@192.168.99.101 //зашли пользователем otus на vm nodecent
-- udisksctl mount -b /dev/sdb1    // /dev/sdb1 монтируется в папку /run/media/otus/<some uuid>
+    - ssh -i ./bootstrap/keys/otus otus@192.168.99.101 //зашли пользователем otus на vm nodecent
+    - udisksctl mount -b /dev/sdb1    // /dev/sdb1 монтируется в папку /run/media/otus/<some uuid>
 
 * chroot
-- ssh -i ./bootstrap/keys/otus3 otus3@192.168.99.101 //зашли пользователем otus на vm nodecent - попадаем с chroot directori, видим только то, что в /var/chroot/otus
+    - ssh -i ./bootstrap/keys/otus3 otus3@192.168.99.101 //зашли пользователем otus на vm nodecent - попадаем с chroot directori, видим только то, что в /var/chroot/otus
 
 * pamd
-- ssh -i ./bootstrap/keys/otus2 otus2@192.168.99.101  //пытаемся зайти пользователем otus2 на vm nodecent - получаем connection closed
+    - ssh -i ./bootstrap/keys/otus2 otus2@192.168.99.101  //пытаемся зайти пользователем otus2 на vm nodecent - получаем connection closed
 
 * apparmor
-- vagrant ssh nodeubu
-- docker exec -it apparmor-nginx bash
-- cd ~ 
-- touch ./some //permission denied
-- exit 
-- aa-complain /etc/apparmor.d/containers/docker-nginx
-- docker exec -it apparmor-nginx bash
-- top // top выполняется
+    - vagrant ssh nodeubu
+    - docker exec -it apparmor-nginx bash
+    - cd ~ 
+    - touch ./some //permission denied
+    - exit 
+    - aa-complain /etc/apparmor.d/containers/docker-nginx
+    - docker exec -it apparmor-nginx bash
+    - top // top выполняется
