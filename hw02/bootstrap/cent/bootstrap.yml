@@ -9,8 +9,8 @@
     - chroot_user: 'otus3'    
     - users:
       - otus
-      - otus1
       - otus2
+      - otus3
 
   handlers:
     - name: "Restart sshd"
