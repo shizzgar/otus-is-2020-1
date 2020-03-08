@@ -1,0 +1,15 @@
+
+- hosts: all
+  become: true
+  remote_user: vagrant
+
+  tasks:
+    - include: inst_docker.yaml
+
+
+
+
+
+
+
+

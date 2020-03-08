@@ -1,0 +1,16 @@
+
+global:
+    cpus: 2
+    mem: 2048
+    ip_pattern: '192.168.99.10'
+
+boxes:
+
+    nodeUbu:
+        box:
+            box: 'ubuntu/bionic64'
+            default_root: 'vagrant' 
+            provision: "./bootstrap/ubu/bootstrap.yaml"
+        
+
+        
