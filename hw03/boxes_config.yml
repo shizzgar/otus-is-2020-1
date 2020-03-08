@@ -1,0 +1,29 @@
+global:
+    ip_pattern: '192.168.99.10'
+boxes:
+    nodevictim:
+        box:
+            box: 'centos/7'
+            box_version: '1603.01'
+            default_root: 'vagrant'
+            cpus: 2
+            mem: 2048
+            playbook: 'ansible/nodevictim/bootstrap.yml'
+        
+    nodebuntu:
+        box:
+            box: "jamesthinkbox/ubuntu-16.04-desktop-amd64"
+            auto_update: false
+            cpus: 1
+            mem: 2048
+            playbook: 'ansible/nodebuntu/bootstrap.yml'
+
+    nodeintruder:
+        box:
+            box: 'kalilinux/rolling'
+            default_root: 'kali'
+            cpus: 2
+            mem: 2048
+            playbook: 'ansible/nodeintruder/bootstrap.yml'
+        
+        

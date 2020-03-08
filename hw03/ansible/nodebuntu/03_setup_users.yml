@@ -1,0 +1,43 @@
+- name: add group otus
+  group: 
+    name: otus
+    state: present
+
+- name: add test user 1 
+  user: 
+    name: otus
+    group: otus
+    password: "{{ password1 }}"
+    shell: /bin/bash
+    createhome: yes
+    append: yes
+
+- name: add test user 2
+  user: 
+    name: otus2
+    group: otus
+    password: "{{ password2 }}"
+    shell: /bin/bash
+    createhome: yes
+    append: yes
+  
+- name: add test user 3
+  user: 
+    name: otus3
+    group: otus
+    password: "{{ password3 }}"
+    shell: /bin/bash
+    createhome: yes
+    append: yes
+
+- name: Set authorized key taken from file
+  authorized_key:
+    user: '{{ item }}'
+    state: present
+    key: "{{ lookup('file', 'ssh/otus3_key.pub') }}"
+  with_items: 
+    - otus 
+    - otus2
+    - otus3
+  
+  

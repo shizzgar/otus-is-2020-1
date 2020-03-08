@@ -1,0 +1,58 @@
+---
+- hosts: all
+  remote_user: vagrant
+  vars:
+    - password1: '$1$otus$H73n7J9kEP9Uu7qtgrOeY.'
+    - password2: '$1$otus2$MJ7TrWnDWc4oHQ8S.dv3k0'
+    - password3: '$1$otus3$aPFnydto.zF7lp8DxS9350'
+
+    # - aa_policy_dir: 'containers'
+    # - policy_for_docker_nginx: 'docker-nginx'
+    # - local_policy_path_for_docker_nginx: 'apparmor'
+#     - default_container_command: sleep 1d
+
+
+  tasks:
+  # - name: Add Docker GPG apt Key
+  #   apt_key:
+  #     url: https://download.docker.com/linux/ubuntu/gpg
+  #     state: present
+  
+  # - name: Enable universe repository
+  #   apt_repository:
+  #     repo: '{{ item }}'
+  #   loop:
+  #     - "deb http://archive.ubuntu.com/ubuntu/ trusty universe"
+  #     - "deb http://archive.ubuntu.com/ubuntu/ trusty-updates universe"
+  #     - "deb http://security.ubuntu.com/ubuntu/ trusty-security universe"  
+  #     - "deb https://download.docker.com/linux/ubuntu bionic stable"
+
+  - name: install mc
+    apt:
+      name: 
+        - mc
+      state: present
+
+  - include: 03_setup_users.yml 
+  
+  - name: download POC 6of CVE-2016-5195
+    get_url: 
+      url: 'https://raw.githubusercontent.com/FireFart/dirtycow/master/dirty.c'
+      dest: '/home/otus/dirty.c'
+
+# - name: replace firefart to bandersnatchfart
+#   replace:
+#     path: '/home/vagrant/dirty.c'
+#     regexp: 'firefart'
+#     replace: "bandersnatchfart"
+
+  - name: compile exploit
+    command: 'gcc -pthread /home/otus/dirty.c -o /home/otus/dirty -lcrypt'
+
+  - name: copy exploit to metasploit directory
+    copy:
+        src: 'msf/dirtycow_priv_esc.rb'
+        dest: "/usr/share/metasploit-framework/modules/exploits/linux/local"
+        owner: root
+        group: root
+        mode: 0644      
