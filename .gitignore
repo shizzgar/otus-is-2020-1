@@ -1,6 +1,7 @@
-
 .vagrant/
 vagrant/
 trash/
 test/
 *.box
+*.vdi
+*.log
