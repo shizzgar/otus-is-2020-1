@@ -5,6 +5,7 @@
 
   tasks:
     - include: inst_docker.yaml
+    - include: inst_trivy.yaml
 
 
 
