@@ -23,8 +23,8 @@
     - role: setup-hardening-for-cis-benchmarks
 
   tasks:
-    - include: ../../dep_task/deployServApp.yml
-    - include: ../../dep_task/auditChecks.yaml
+    - include: ../dep_task/deployServApp.yml
+    - include: ../dep_task/auditChecks.yaml
   
 
 

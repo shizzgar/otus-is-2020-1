@@ -24,7 +24,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     glob_store = vagrantCfg['global']['store']||nil
     glob_boot_store = vagrantCfg['global']['boot_store']||nil
     provider = vagrantCfg['global']['provider']||'vmware'
-    def_disk_path = './'
+    def_disk_path = './sata_u.vdi'
     vagrantCfg['boxes'].each do | (name, cfg) |
         host_ip="#{node_ip_pattern}%d" % box_number
         box_number+=1

@@ -31,8 +31,6 @@ global:
     provider: 'vmware' #'vbox'          какой провайдер должен использовать вагрант для поднятия машин
                                         варианты: virtualBox | vmware-esxi
                                         если vmware, то необходимо задать переменные для подключения к esxi хосту
-                                        Управление esxi хостом осуществляется посредством
-                                        [vagrant-vmware-esxi plugin](https://github.com/josenk/vagrant-vmware-esxi)
 
     store: '10'                         размер дополнительно подключаемого диска для машин
                                         так же этот параметр можно указать для каждой из
@@ -40,6 +38,7 @@ global:
                                         Если провайдер vmware, то диск создается на esxi хосте.
 
     ip_pattern: '192.168.100.10'        паттерн ip адреса для поднимаемых машин
+
     esxi_hostname: 'ip.or.host.fqdn'
     esxi_username: 'someuser'
     esxi_password: 'somepass'
@@ -51,7 +50,7 @@ boxes:
             cpus: '4'
             mem: '4096'
             provision: ./ansible/nodebuntu/bootstrap.yml
-            # disk_path: './sata.vdi'  <--- если провайдер vbox, то можно указать путь для создаваемоего диска, def ./
+            # disk_path: './sata.vdi'  <--- если провайдер vbox, то можно указать путь для создаваемоего диска, def ./sata_u.vdi
 
 
 ```
