@@ -1,0 +1,10 @@
+version: '3.1'
+
+services:
+  webapp-simple:
+    image: webapp-simple-image:latest
+    container_name: webapp-simple
+
+    ports:
+      - "127.0.0.1:8188:8188"
+

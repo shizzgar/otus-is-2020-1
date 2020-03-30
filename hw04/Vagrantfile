@@ -1,75 +1,106 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
-
 VAGRANTFILE_API_VERSION=2
-
 CONFIG_FILE='boxes_config.yml'
 require='yaml'
 myRoot=File.dirname(__FILE__)
 if not Pathname(myRoot + "/" + CONFIG_FILE).exist?
     fail "vagrant.yml not found"
 end
-
+ 
 vagrantCfg=YAML.load_file(myRoot + "/" + CONFIG_FILE)
-node_cpus=vagrantCfg['global']['cpus']||1
-node_mem=vagrantCfg['global']['mem']||1024
-
-node_ip_pattern=vagrantCfg['global']['ip_pattern']||'192.168.254.'
-
+node_ip_pattern=vagrantCfg['global']['ip_pattern']||'192.168.100.10'
 box_number=1
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-
-    box_count=0
-
-    vagrantCfg['boxes'].each do |boxName, boxCfg|
-        box_count+=1
-    end    
-
-    hostList=Hash.new
-
-    vagrantCfg['boxes'].each do |boxName, boxCfg|
-        host_name=boxName#+'.local'
+    
+    esxi_hostname = vagrantCfg['global']['esxi_hostname']
+    esxi_username = vagrantCfg['global']['esxi_username']
+    esxi_password = vagrantCfg['global']['esxi_password']
+    esxi_virtual_network = vagrantCfg['global']['esxi_virtual_network']
+    esxi_resource_pool = vagrantCfg['global']['esxi_resource_pool']
+    glob_cpus = vagrantCfg['global']['cpus']||'1'
+    glob_mem = vagrantCfg['global']['mem']||'1024'
+    glob_store = vagrantCfg['global']['store']||nil
+    glob_boot_store = vagrantCfg['global']['boot_store']||nil
+    provider = vagrantCfg['global']['provider']||'vmware'
+    def_disk_path = './'
+    vagrantCfg['boxes'].each do | (name, cfg) |
         host_ip="#{node_ip_pattern}%d" % box_number
-        hostList[boxName]={'host'=>host_name,'ip'=>host_ip}
         box_number+=1
-    end    
+        if cfg['box'].key?('cpus')
+            numvcpus = cfg['box']['cpus']
+        else
+            numvcpus = glob_cpus
+        end
+        if cfg['box'].key?('mem')
+            memory = cfg['box']['mem']
+        else
+            memory = glob_mem
+        end
+        if cfg['box'].key?('store')
+            storage = cfg['box']['store']
+        else
+            storage = glob_store
+        end
+        # if cfg['box'].key?('boot_store')
+        #     boot_store = cfg['box']['boot_store']
+        # else
+        #     boot_store = glob_boot_store
+        # end
+        if cfg['box'].key?('disk_path')
+            disk_path = cfg['box']['disk_path']
+        else
+            disk_path = def_disk_path
+        end
 
-    vagrantCfg['boxes'].each do |boxName, boxCfg|
-        box_name=boxName
-        host_name=hostList[boxName]['host']
-        host_ip=hostList[boxName]['ip']
-        bx=boxCfg['box']
-        config.vm.define box_name do |box|
+        config.vm.define name do |machine|
+            # machine.vm.synced_folder('.', '/Vagrantfiles', type: 'rsync')
+            machine.vm.synced_folder('.', '/vagrant', type: 'nfs', disabled: true)
+            machine.vm.box      = cfg['box']['box']
+            machine.vm.hostname = name
+            machine.vm.network :private_network, ip: host_ip
 
-            box.vm.box=bx['box']
-            box.vm.hostname=host_name
-            box.vm.network :private_network, ip: host_ip
+            if provider == 'vmware'
+                machine.vm.provider :vmware_esxi do |esxi|
+                    esxi.esxi_hostname              = esxi_hostname
+                    esxi.esxi_username              = esxi_username
+                    esxi.esxi_password              = esxi_password
+                    # esxi.esxi_virtual_network[0]  = esxi_virtual_network[0]
+                    # esxi.esxi_virtual_network[1]  = esxi_virtual_network[1]
+                    # esxi.guest_boot_disk_size     = boot_store
+                    # esxi.esxi_resource_pool       = 'vagrant'
+                    esxi.esxi_disk_store            = 'datastore 2'
+                    esxi.guest_virtualhw_version    = '14'
+                    # esxi.local_allow_overwrite    = 'True'
+                    esxi.debug                      = 'true password info'
 
-            if bx.key?('newdisk_path')                
-                box.newdisk.path = bx['newdisk_path'] 
-                box.newdisk.size = bx['newdisk_size'] * 1024 # size in megabytes
-            end
-
-            if bx.key?('provision')                
-                box.vm.provision "ansible" do |ansible|
-                    ansible.playbook = bx['provision'] 
-                end    
-            end
-            
-            box.vm.provision :hosts do |hosts|
-                hostList.each do |host_name, host_item|
-                    hosts.add_host host_item['ip'], [host_item['host']]
+                    esxi.guest_numvcpus        = numvcpus
+                    esxi.guest_memsize         = memory
+                    esxi.guest_storage         = storage
                 end
+            elsif provider == 'vbox'
+                machine.vm.provider "virtualbox" do |vbox|
+                    vbox.memory=memory
+                    vbox.cpus=numvcpus
+                    if bx['vdi_file']
+                        unless File.exist?(cfg['box']['vdi_file'])
+                            vbox.customize(['createmedium','disk','--filename',disk_path,'--format','vdi','--size',1024*store]);
+                        end    
+                        vbox.customize(['storageattach',:id,'--storagectl','SCSI','--port',2,'--device',0,'--type','hdd','--medium',disk_path]);
+                    end
+                end
+            end
+            machine.vm.provision :hosts do |hosts|
+                hosts.add_host host_ip, [name]
             end        
-
-
-            box.vm.provider "virtualbox" do |vbox|
-                vbox.memory=node_mem
-                vbox.cpus=node_cpus
+            if cfg['box'].key?('provision')                
+                machine.vm.provision "ansible" do |ansible|
+                    ansible.playbook = cfg['box']['provision']
+                    # ansible.verbose = "v" 
+                    ansible.become=true
+                end    
             end
         end
     end
-    
-end                
-
+end

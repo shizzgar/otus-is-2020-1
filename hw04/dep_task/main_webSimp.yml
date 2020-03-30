@@ -1,0 +1,20 @@
+---
+- hosts: all
+  remote_user: vagrant
+
+  vars:
+    - ansible_python_interpreter: /usr/bin/python3
+    - app: webapp-simple
+
+  tasks:
+    - include: deployServApp.yml
+    - include: auditChecks.yaml
+  
+
+
+
+
+
+
+          
+      

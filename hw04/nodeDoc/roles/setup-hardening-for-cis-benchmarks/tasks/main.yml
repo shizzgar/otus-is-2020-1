@@ -1,0 +1,8 @@
+---
+#main.yml
+
+- include: 06-dl-docker-bench-security+trivy.yml
+- include: 07-hardening-audit(1.2.X).yml
+- include: 08-hardening-docker-daemon(2.X).yml
+
+#- include: 05-start_wekan_container.yml

@@ -1,0 +1,36 @@
+---
+- hosts: all
+  remote_user: vagrant
+  become: yes
+  
+  vars:
+    - password1: '$1$otus$H73n7J9kEP9Uu7qtgrOeY.'
+    - password2: '$1$otus2$MJ7TrWnDWc4oHQ8S.dv3k0'
+    - password3: '$1$otus3$aPFnydto.zF7lp8DxS9350'
+
+    - docker_host: '192.168.100.101'
+    - ansible_python_interpreter: /usr/bin/python3
+    - app: webapp-simple
+
+
+  roles:
+    - role: startup
+    - role: setup-docker
+    - role: docker-tls
+      dds_host: "{{ docker_host }}"
+      dds_server_cert_path: "~/certificates"
+      dds_restart_docker: no
+    - role: setup-hardening-for-cis-benchmarks
+
+  tasks:
+    - include: ../../dep_task/deployServApp.yml
+    - include: ../../dep_task/auditChecks.yaml
+  
+
+
+
+
+
+
+          
+      

@@ -1,0 +1,116 @@
+- name: copy client certs to ~/.docker
+  copy:
+    src: "/root/.docker"
+    dest: "/home/vagrant/"
+    remote_src: yes
+
+- name: remove daemon.json
+  file:
+      path: "/etc/docker/daemon.json"
+      state: absent
+
+- name: ensure create authz-broker directory
+  file: 
+    path: "/var/lib/authz-broker"
+    state: directory
+      
+- name: copy twistedlock autz policy to guest
+  copy:
+    src: autz-broker/policy.json
+    dest: /var/lib/authz-broker/policy.json
+
+- name: copy twistedlock autz broker to guest
+  copy:
+    src: autz-broker/authz-broker
+    dest: /usr/bin/authz-broker
+    mode: "0755"
+
+- name: copy twistedlock autz service file to guest
+  copy:
+    src: autz-broker/twistlock-authz.service
+    dest: /lib/systemd/system/twistlock-authz.service
+
+- name: modify ExecStart line in docker.service
+  lineinfile:
+    dest: /lib/systemd/system/docker.service
+    regexp: "^ExecStart=(.*)$"
+    state: present
+    line: >-
+      ExecStart=/usr/bin/dockerd 
+      --host=fd:// 
+      --host=tcp://{{ docker_host }}:2376  
+      --icc=false 
+      --tlsverify=true 
+      --tlscacert=/root/certificates/ca.pem 
+      --tlscert=/root/certificates/server-cert.pem 
+      --tlskey=/root/certificates/server-key.pem 
+      --containerd=/run/containerd/containerd.sock 
+      --userns-remap=default 
+      --log-driver=syslog 
+      --live-restore=true 
+      --userland-proxy=false 
+      --no-new-privileges=true 
+      --default-ulimit nofile=1024:2048 
+      --default-ulimit nproc=64:128 
+      --authorization-plugin=authz-broker
+    
+- name: set env vars for client
+  blockinfile:
+    path: /root/.bashrc
+    block: |
+       export DOCKER_CONTENT_TRUST=1
+       export DOCKER_TLS_VERIFY=1
+       export DOCKER_HOST=tcp://{{ docker_host }}:2376
+       export DOCKER_CERT_PATH=~/.docker
+          
+- name: set env vars for client
+  blockinfile:
+    path: /root/.profile
+    block: |
+      export DOCKER_CONTENT_TRUST=1
+      export DOCKER_TLS_VERIFY=1
+      export DOCKER_HOST=tcp://{{ docker_host }}:2376
+      export DOCKER_CERT_PATH=~/.docker
+               
+- name: set env vars for vagrant
+  blockinfile:
+    path: /home/vagrant/.bashrc
+    block: |
+      export DOCKER_CONTENT_TRUST=1
+      export DOCKER_TLS_VERIFY=1
+      export DOCKER_HOST=tcp://{{ docker_host }}:2376
+      export DOCKER_CERT_PATH=~/.docker
+          
+- name: set env vars for vagrant
+  blockinfile:
+    path: /home/vagrant/.profile
+    block: |
+      export DOCKER_CONTENT_TRUST=1
+      export DOCKER_TLS_VERIFY=1
+      export DOCKER_HOST=tcp://{{ docker_host }}:2376
+      export DOCKER_CERT_PATH=~/.docker
+               
+- name: reload systemctl
+  command: "systemctl daemon-reload"
+
+- name: restart twistlock/authz-broker plugin
+  service:
+    name: "twistlock-authz"
+    enabled: yes
+    state: restarted
+  
+- name: restart docker daemon
+  service:
+    name: docker
+    enabled: yes
+    state: restarted
+
+- name: add user vagrant to group docker
+  user:
+    name: vagrant
+    groups: docker
+
+
+
+    
+

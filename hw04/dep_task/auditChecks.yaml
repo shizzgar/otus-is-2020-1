@@ -1,0 +1,13 @@
+
+- name: docSecBench
+  become: true
+  shell: 
+    cmd: ./docker-bench-security.sh > /home/vagrant/benchInfo.log
+    chdir: /home/vagrant/docker-bench-security/
+    creates: benchInfo.log
+
+- name: trivy
+  shell: 
+    cmd: trivy "{{ app }}-image" > /home/vagrant/trivyInfo.log
+    creates: trivyInfo.log
+

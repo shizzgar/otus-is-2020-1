@@ -1,0 +1,19 @@
+---
+#main.yml
+
+- name: Add Docker GPG apt Key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: Enable universe repository
+  apt_repository:
+    repo: '{{ item }}'
+  loop:
+    - "deb http://archive.ubuntu.com/ubuntu/ bionic universe"
+    - "deb http://archive.ubuntu.com/ubuntu/ bionic-updates universe"
+    - "deb http://security.ubuntu.com/ubuntu/ bionic-security universe"  
+    - "deb https://download.docker.com/linux/ubuntu bionic stable"
+
+- include: 01_setup_disk.yml 
+- include: 03_setup_users.yml 

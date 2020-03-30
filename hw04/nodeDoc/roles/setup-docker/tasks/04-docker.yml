@@ -1,0 +1,22 @@
+# - name: Install aptitude using apt
+#     apt: name=aptitude state=latest update_cache=yes force_apt_get=yes
+
+- name: Install required system packages
+  apt: 
+    name: [ 'apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'python3-pip', 'python3-pip', 'virtualenv', 'python3-setuptools', 'docker-ce']     
+    state: latest 
+    update_cache: yes
+
+- name: Update apt and install docker-compose
+  apt: 
+    update_cache: no 
+    name: docker-compose 
+    state: latest
+
+- name: Install Docker & docker-compose Module for Python
+  pip:
+    executable: pip3
+    name: ['docker>=2.6.0', 'docker-compose']
+
+
+

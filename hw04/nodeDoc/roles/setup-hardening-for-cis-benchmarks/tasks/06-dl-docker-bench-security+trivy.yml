@@ -1,0 +1,10 @@
+- name: clone git repo for docker-bench-security
+  git:
+    clone: yes
+    repo: 'https://github.com/docker/docker-bench-security.git'
+    dest: ~/docker-bench-security
+  become: no    
+
+- name: Install trivy Vulnerability Scanner for Containers
+  apt:
+    deb: https://github.com/aquasecurity/trivy/releases/download/v0.5.2/trivy_0.5.2_Linux-64bit.deb

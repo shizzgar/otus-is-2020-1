@@ -1,0 +1,38 @@
+- name: copy "{{ app }}"
+  copy:
+      src: ../{{ app }}/
+      dest: .
+      
+- name: Build image and with build args
+  docker_image:
+    name: "{{ app }}-image"
+    build:
+      pull: yes
+      path: .
+      args:
+        listen_port: 8188
+    source: build    
+
+- name: start container
+  docker_container:
+    name: "{{ app }}"
+    image: "{{ app }}-image"
+    memory: 512M
+    memory_reservation: 256M
+    cpu_shares: 512
+    read_only: yes
+    restart: yes
+    restart_policy: on-failure
+    restart_retries: 5
+    security_opts: 'no-new-privileges:true'
+    pids_limit: 100
+    state: started
+    mounts: [
+      {'source': 'data',
+      'target': '/run/app/data',
+      'type': 'volume'}
+    ]
+    ports:
+      - "127.0.0.1:8188:8188"
+
+    

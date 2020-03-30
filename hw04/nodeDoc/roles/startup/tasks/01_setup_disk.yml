@@ -1,0 +1,45 @@
+    - name: check if /dev/sdb exists
+      parted: device=/dev/sdb
+      register: sdb_info
+    
+    - name: Check if drives are already mounted
+      shell: df | grep "/dev/sdb" | wc -l
+      register: mounted_drives
+
+    - name: create partition if not exists
+      parted: 
+        device: /dev/sdb
+        number: 1
+        state: present
+      when: (sdb_info.partitions[0] is not defined) and (mounted_drives.stdout=="0")
+
+    - name: create filesystem on /dev/sdb
+      filesystem:
+        fstype: ext3 
+        dev: /dev/sdb
+        force: yes
+      when: (sdc_info.partitions[0] is not defined) and (mounted_drives.stdout=="0")
+
+    - name: Create a directory if it does not exist
+      file:
+        path: /var/lib/docker
+        state: directory
+        mode: '0755'
+        recurse: yes
+      when: (sdc_info.partitions[0] is not defined) and (mounted_drives.stdout=="0")
+        
+    
+    - name: Remove everything from /var/lib/docker    
+      file:
+        state: absent
+        path: /var/lib/docker/*
+        # - directory 
+    
+    - name: mount docker container storage as separate fs 
+      mount:
+        path: /var/lib/docker
+        src: /dev/sdb
+        fstype: ext3
+        state: mounted      
+    
+
