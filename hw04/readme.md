@@ -54,6 +54,9 @@ boxes:
 
 
 ```
+
+Управление esxi хостом осуществляется посредством
+[vagrant-vmware-esxi plugin](https://github.com/josenk/vagrant-vmware-esxi)
 Я буду использовать vmware-esxi провайдер. 
 
 С помощью Vagrant поднимаем vm Ubuntu 18.04 из образа bento/ubuntu-18.04 (nodeDoc18, ip 192.168.100.101), создаем отдельный диск.
