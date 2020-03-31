@@ -16,7 +16,7 @@ boxes:
             box: 'bento/ubuntu-18.04'
             cpus: '4'
             mem: '4096'
-            provision: ./ansible/nodebuntu/bootstrap.yml
+            provision: ./nodeDoc/bootstrap.yml
             disk_path: './sata.vdi'
 
     # nodeDoc19:
