@@ -5,6 +5,11 @@
     dest: ~/docker-bench-security
   become: no    
 
-- name: Install trivy Vulnerability Scanner for Containers
-  apt:
-    deb: https://github.com/aquasecurity/trivy/releases/download/v0.5.2/trivy_0.5.2_Linux-64bit.deb
+- name: setup trivy
+  get_url: 
+    url: 'https://github.com/aquasecurity/trivy/releases/download/v0.5.3/trivy_0.5.3_Linux-64bit.deb'
+    dest: ./trivy.deb
+
+- name: setup trivy
+  apt: 
+    deb: './trivy.deb'
