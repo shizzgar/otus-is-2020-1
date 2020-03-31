@@ -2,10 +2,10 @@
 global:
     ip_pattern: '192.168.100.10'
     store: '10'
-    provider: 'vmware' #'vbox'
-    esxi_hostname: 'ip.or.host.fqdn'
-    esxi_username: 'someuser'
-    esxi_password: 'somepass'
+    provider:  'vbox'
+    #esxi_hostname: 'ip.or.host.fqdn'
+    #esxi_username: 'someuser'
+    #esxi_password: 'somepass'
 
 
 
@@ -17,6 +17,7 @@ boxes:
             cpus: '4'
             mem: '4096'
             provision: ./ansible/nodebuntu/bootstrap.yml
+            disk_path: './sata.vdi'
 
     # nodeDoc19:
     #     box:
