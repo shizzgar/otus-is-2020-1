@@ -8,8 +8,9 @@
 - name: setup trivy
   get_url: 
     url: 'https://github.com/aquasecurity/trivy/releases/download/v0.5.3/trivy_0.5.3_Linux-64bit.deb'
-    dest: ./trivy.deb
+    dest: ~/trivy.deb
+    timeout: 86400
 
 - name: setup trivy
   apt: 
-    deb: './trivy.deb'
+    deb: '~/trivy.deb'

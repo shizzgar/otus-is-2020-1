@@ -3,7 +3,7 @@
       register: sdb_info
     
     - name: Check if drives are already mounted
-      shell: df | grep "/dev/sdb" | wc -l
+      shell: df | grep "/dev/sdb1" | wc -l
       register: mounted_drives
 
     - name: create partition if not exists
@@ -16,7 +16,7 @@
     - name: create filesystem on /dev/sdb
       filesystem:
         fstype: ext3 
-        dev: /dev/sdb
+        dev: /dev/sdb1
         force: yes
       when: (sdc_info.partitions[0] is not defined) and (mounted_drives.stdout=="0")
 
@@ -38,7 +38,7 @@
     - name: mount docker container storage as separate fs 
       mount:
         path: /var/lib/docker
-        src: /dev/sdb
+        src: /dev/sdb1
         fstype: ext3
         state: mounted      
     

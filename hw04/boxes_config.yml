@@ -1,7 +1,7 @@
 
 global:
     ip_pattern: '192.168.100.10'
-    store: '10'
+    store: 15
     provider:  'vbox'
     #esxi_hostname: 'ip.or.host.fqdn'
     #esxi_username: 'someuser'
@@ -13,7 +13,7 @@ boxes:
 
     nodeDoc18:
         box:
-            box: 'bento/ubuntu-18.04'
+            box: 'ubuntu/bionic64'
             cpus: '4'
             mem: '4096'
             provision: ./nodeDoc/bootstrap.yml
