@@ -1,10 +1,13 @@
 
 - name: docSecBench
-  become: true
-  shell: 
-    cmd: ./docker-bench-security.sh > /home/vagrant/benchInfo.log
+  shell: ./docker-bench-security.sh > /home/vagrant/benchInfo.log
+  args:
+    executable: /bin/bash
     chdir: /home/vagrant/docker-bench-security/
     creates: benchInfo.log
+  become: yes
+  become_flags: -E
+  become_method: sudo  
 
 - name: trivy
   shell: 

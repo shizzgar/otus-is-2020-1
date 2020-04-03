@@ -58,7 +58,7 @@
   blockinfile:
     path: /root/.bashrc
     block: |
-       export DOCKER_CONTENT_TRUST=1
+       export DOCKER_CONTENT_TRUST="1"
        export DOCKER_TLS_VERIFY=1
        export DOCKER_HOST=tcp://{{ docker_host }}:2376
        export DOCKER_CERT_PATH=~/.docker
@@ -67,7 +67,7 @@
   blockinfile:
     path: /root/.profile
     block: |
-      export DOCKER_CONTENT_TRUST=1
+      export DOCKER_CONTENT_TRUST="1"
       export DOCKER_TLS_VERIFY=1
       export DOCKER_HOST=tcp://{{ docker_host }}:2376
       export DOCKER_CERT_PATH=~/.docker
@@ -76,7 +76,7 @@
   blockinfile:
     path: /home/vagrant/.bashrc
     block: |
-      export DOCKER_CONTENT_TRUST=1
+      export DOCKER_CONTENT_TRUST="1"
       export DOCKER_TLS_VERIFY=1
       export DOCKER_HOST=tcp://{{ docker_host }}:2376
       export DOCKER_CERT_PATH=~/.docker
@@ -85,7 +85,7 @@
   blockinfile:
     path: /home/vagrant/.profile
     block: |
-      export DOCKER_CONTENT_TRUST=1
+      export DOCKER_CONTENT_TRUST="1"
       export DOCKER_TLS_VERIFY=1
       export DOCKER_HOST=tcp://{{ docker_host }}:2376
       export DOCKER_CERT_PATH=~/.docker

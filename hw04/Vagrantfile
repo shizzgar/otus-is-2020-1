@@ -83,7 +83,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
                 machine.vm.provider "virtualbox" do |vbox|
                     vbox.memory=memory
                     vbox.cpus=numvcpus
-                    puts 'before'
                     if cfg['box']['disk_path']
                         unless File.exist?(cfg['box']['disk_path'])
                             vbox.customize(['createmedium','disk','--filename',disk_path,'--format','vdi','--size',1024*storage]);

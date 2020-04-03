@@ -14,7 +14,7 @@ RUN     chmod +x ./entrypoint && chown -R webapp:webapp $(pwd)/*
 RUN YARL_NO_EXTENSIONS=1 MULTIDICT_NO_EXTENSIONS=1 pip3.8 install -r requirements.txt
  
 
-HEALTHCHECK --interval=5m --timeout=3s CMD curl -f http://localhost:8188/ || exit 1
+HEALTHCHECK --interval=5m --timeout=3s CMD sh curl -f http://localhost:8188/ || exit 1
 
 RUN find / -perm /6000 -type f -exec chmod a-s {} \; || true
 

@@ -21,7 +21,7 @@
   copy:
       src: trivy/trivy0.5.3.deb
       dest: ~/trivy.deb
-  when: trivy_downloaded=0    
+  when: trivy_downloaded==0
         
   
 - name: setup trivy

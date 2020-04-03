@@ -24,11 +24,11 @@ Dockerfile - в директории ./setup-hardening-for-cis-benchmarks/server
 
 Конфиг для вагранта имеет следующую структуру:
 
-```
+```yml
 
 
 global:
-    provider: 'vmware' #'vbox'          какой провайдер должен использовать вагрант для поднятия машин
+    provider: 'vbox' #'vbox'            какой провайдер должен использовать вагрант для поднятия машин
                                         варианты: virtualBox | vmware-esxi
                                         если vmware, то необходимо задать переменные для подключения к esxi хосту
 
@@ -39,27 +39,23 @@ global:
 
     ip_pattern: '192.168.100.10'        паттерн ip адреса для поднимаемых машин
 
-    esxi_hostname: 'ip.or.host.fqdn'
-    esxi_username: 'someuser'
-    esxi_password: 'somepass'
+    # esxi_hostname: 'ip.or.host.fqdn'
+    # esxi_username: 'someuser'
+    # esxi_password: 'somepass'
 
 boxes:
     nodeDoc18:
         box:
-            box: 'bento/ubuntu-18.04'
+            box: 'ubuntu/bionic64'
             cpus: '4'
             mem: '4096'
-            provision: ./ansible/nodebuntu/bootstrap.yml
-            # disk_path: './sata.vdi'  <--- если провайдер vbox, то можно указать путь для создаваемоего диска, def ./sata_u.vdi
+            provision: ./nodeDoc/bootstrap.yml
+            disk_path: './sata.vdi'  <--- если провайдер vbox, то можно указать путь для создаваемоего диска, def ./sata_u.vdi
 
 
 ```
 
-Управление esxi хостом осуществляется посредством
-[vagrant-vmware-esxi plugin](https://github.com/josenk/vagrant-vmware-esxi)
-Я буду использовать vmware-esxi провайдер. 
-
-С помощью Vagrant поднимаем vm Ubuntu 18.04 из образа bento/ubuntu-18.04 (nodeDoc18, ip 192.168.100.101), создаем отдельный диск.
+С помощью Vagrant поднимаем vm Ubuntu 18.04 из образа ubuntu/bionic64 (nodeDoc18, ip 192.168.100.101), создаем отдельный диск.
 Далее плейбуками ansible (bootstrap.yml)
 - (role startup) прописываем репозитории ubuntu 
 - (role startup) создаем раздел, файловую систему, монтируем раздел в папку /var/lib/docker
@@ -83,11 +79,18 @@ boxes:
         COMMAND  PID USER   FD   TYPE DEVICE SIZE/OFF NODE NAME
         dockerd 7029 root    3u  IPv4 101700      0t0  TCP nodeDoc18:2376 (LISTEN)
 
+        По CIS 4.5 (ensure docker content trust) тоже непонятно. Переменную окружения DOCKER_CONTENT_TRUST я установил, ноасколько я понимаю, для того, чтобы это работало необходимо развернуть docker registry и notary service. Есть ли необходимость делать это в рамках данного ДЗ?      
+
 - (./dep_task/deployServApp.yaml) запускаем контейнер из образа в безопасной конфигурации согласно CIS 4 и 5
-- (./dep_task/auditChecks.yaml) стартуем задания наших проверок:
-1. Запуск скрипта docker-bench-security и вывод всей инфы в benchInfo.log
-2. Аналогично для Trivy, с дампом в trivyInfo.log
--------------------------------------------------
-Для проверки содержимого запустить 
-vagrant ssh -c "cat benchInfo.log && cat trivyInfo.log"
+
+
+Для проверки необходимо выполнить 
+$sudo vagrant ssh nodeDoc18
+
+далее, для проверки скриптом docker-bench-security:
+$cd docker-bench-security
+$sudo -E ./docker-bench-security.sh
+
+Для проверки trivy:
+$sudo trivy webapp-simple-image
 
