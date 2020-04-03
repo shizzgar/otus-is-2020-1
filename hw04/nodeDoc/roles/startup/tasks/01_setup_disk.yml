@@ -1,24 +1,35 @@
-    - name: check if /dev/sdb exists
-      parted: device=/dev/sdb
-      register: sdb_info
+
+    #FAKTS
+    - name: Include vars of stuff.yaml into the 'stuff' variable (2.2).
+      include_vars:
+        file: ../../boxes_config.yml
+        name: vars
+
+
+    #if vbox
+    - name: check if /dev/sdc1 exists
+      parted: device=/dev/sdc
+      register: sdc_info
+      when: vars['global']['provider']=='vbox'
     
     - name: Check if drives are already mounted
-      shell: df | grep "/dev/sdb1" | wc -l
+      shell: df | grep "/dev/sdc1" | wc -l
       register: mounted_drives
-
+      when: vars['global']['provider']=='vbox'
+  
     - name: create partition if not exists
       parted: 
-        device: /dev/sdb
+        device: /dev/sdc
         number: 1
         state: present
-      when: (sdb_info.partitions[0] is not defined) and (mounted_drives.stdout=="0")
+      when: (sdc_info.partitions[0] is not defined) and (mounted_drives.stdout=="0") and (vars['global']['provider']=='vbox')
 
-    - name: create filesystem on /dev/sdb
+    - name: create filesystem on /dev/sdc1
       filesystem:
         fstype: ext3 
-        dev: /dev/sdb1
+        dev: /dev/sdc1
         force: yes
-      when: (sdc_info.partitions[0] is not defined) and (mounted_drives.stdout=="0")
+      when: (sdc_info.partitions[0] is not defined) and (mounted_drives.stdout=="0") and (vars['global']['provider']=='vbox')
 
     - name: Create a directory if it does not exist
       file:
@@ -26,14 +37,62 @@
         state: directory
         mode: '0755'
         recurse: yes
-      when: (sdc_info.partitions[0] is not defined) and (mounted_drives.stdout=="0")
+      when: (sdc_info.partitions[0] is not defined) and (mounted_drives.stdout=="0") and (vars['global']['provider']=='vbox')
+        
+    - name: Remove everything from /var/lib/docker    
+      file:
+        state: absent
+        path: /var/lib/docker/*
+      when: vars['global']['provider']=='vbox'
+    
+    - name: mount docker container storage as separate fs 
+      mount:
+        path: /var/lib/docker
+        src: /dev/sdc1
+        fstype: ext3
+        state: mounted
+      when: vars['global']['provider']=='vbox'
+
+
+    #if vmware
+    - name: check if /dev/sdb exists
+      parted: device=/dev/sdb
+      register: sdb_info
+      when: vars['global']['provider']=='vmware'
+    
+    - name: Check if drives are already mounted
+      shell: df | grep "/dev/sdb1" | wc -l
+      register: mounted_drives
+      when: vars['global']['provider']=='vmware'
+
+    - name: create partition if not exists
+      parted: 
+        device: /dev/sdb
+        number: 1
+        state: present
+      when: (sdb_info.partitions[0] is not defined) and (mounted_drives.stdout=="0") and (vars['global']['provider']=='vmware')
+
+    - name: create filesystem on /dev/sdb1
+      filesystem:
+        fstype: ext3 
+        dev: /dev/sdb1
+        force: yes
+      when: (sdc_info.partitions[0] is not defined) and (mounted_drives.stdout=="0") and (vars['global']['provider']=='vmware')
+
+    - name: Create a directory if it does not exist
+      file:
+        path: /var/lib/docker
+        state: directory
+        mode: '0755'
+        recurse: yes
+      when: (sdc_info.partitions[0] is not defined) and (mounted_drives.stdout=="0") and (vars['global']['provider']=='vmware')
         
     
     - name: Remove everything from /var/lib/docker    
       file:
         state: absent
         path: /var/lib/docker/*
-        # - directory 
+      when: and (vars['global']['provider']=='vmware')
     
     - name: mount docker container storage as separate fs 
       mount:
@@ -41,5 +100,5 @@
         src: /dev/sdb1
         fstype: ext3
         state: mounted      
-    
+      when: and (vars['global']['provider']=='vmware')
 
