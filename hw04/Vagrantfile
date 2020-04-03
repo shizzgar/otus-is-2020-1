@@ -98,7 +98,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
             if cfg['box'].key?('provision')                
                 machine.vm.provision "ansible" do |ansible|
                     ansible.playbook = cfg['box']['provision']
-                    # ansible.verbose = "v" 
+                    # ansible.verbose = "vvv" 
                     ansible.become=true
                 end    
             end

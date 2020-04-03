@@ -5,12 +5,25 @@
     dest: ~/docker-bench-security
   become: no    
 
-- name: setup trivy
-  get_url: 
-    url: 'https://github.com/aquasecurity/trivy/releases/download/v0.5.3/trivy_0.5.3_Linux-64bit.deb'
-    dest: ~/trivy.deb
-    timeout: 86400
 
+- name: setup trivy
+  block:
+    - name: try download trivy
+      get_url: 
+        url: 'https://github.com/aquasecurity/trivy/releases/download/v0.5.3/trivy_0.5.3_Linux-64bit.deb'
+        dest: ~/trivy.deb
+        timeout: 86400
+    - set_fact: trivy_downloaded=1    
+  rescue:
+    - set_fact: trivy_downloaded=0      
+
+- name: copy "{{ app }}"
+  copy:
+      src: trivy/trivy0.5.3.deb
+      dest: ~/trivy.deb
+  when: trivy_downloaded=0    
+        
+  
 - name: setup trivy
   apt: 
     deb: '~/trivy.deb'
