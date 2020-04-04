@@ -84,6 +84,11 @@ boxes:
 - (./dep_task/deployServApp.yaml) запускаем контейнер из образа в безопасной конфигурации согласно CIS 4 и 5
 
 
+3. Запуск VM и проверка выполнения задач
+
+Запуск VM
+$sudo vagrant up --provision
+
 Для проверки необходимо выполнить 
 $sudo vagrant ssh nodeDoc18
 
