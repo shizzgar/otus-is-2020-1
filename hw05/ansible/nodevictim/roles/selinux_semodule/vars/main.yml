@@ -1,0 +1,2 @@
+---
+selinux_module: "nginx_custom_module"

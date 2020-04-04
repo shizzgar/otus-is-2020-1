@@ -1,0 +1,20 @@
+---
+#main.yml
+
+
+- name: Add epel-release repo
+  yum:
+    name: epel-release
+    state: present
+    
+- name: install mc, setools etc
+  yum:
+    name: 
+        - mc
+        - setools-console
+        - policycoreutils-python
+        - policycoreutils-newrole
+        - selinux-policy-mls
+    state: present
+      
+- include: 03_setup_users.yml 

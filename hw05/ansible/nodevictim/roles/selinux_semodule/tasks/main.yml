@@ -1,0 +1,57 @@
+---
+- name: check if module loaded
+  command: semodule --list-modules
+  register: semodule_loaded
+  changed_when: 'selinux_module not in semodule_loaded.stdout'
+  
+- name: create selinux directory
+  file:
+    path: /var/lib/selinux
+    state: directory
+    mode: 0700
+
+- name: copy module template
+  template:
+    src: "templates/{{ selinux_module }}.te"
+    dest: "/var/lib/selinux/{{ selinux_module}}.te"
+  register:   semodule_te
+  
+- name: build and install selinux nginx_custom_module
+  command: "{{ item }}"
+  args: 
+    chdir: /var/lib/selinux
+  with_items:
+    - "checkmodule -M -m {{ selinux_module }}.te -o {{ selinux_module }}.mod "
+    - "semodule_package -o {{ selinux_module }}.pp -m {{ selinux_module }}.mod"
+    - "semodule -i {{ selinux_module}}.pp"
+  register: semodule_added  
+  when: (semodule_loaded or semodule_te)
+      
+  
+- name: Allow nginx to listen on tcp port 8188
+  seport:
+    ports: "{{ nginx_port }}"
+    proto: tcp
+    setype: nginx_custom_port_t
+    state: present
+  when: (semodule_loaded or semodule_added)
+
+- name: nginx restart to test module
+  block:
+    - name: try to start nginx (semodule)
+      service:
+        name: nginx
+        state: restarted    
+    - debug: 
+        msg: "nginx start OK (semodule)"
+  rescue:
+    - debug:
+        msg: "nginx start FAILED (semodule)"
+    
+
+
+    
+     
+
+    
+  

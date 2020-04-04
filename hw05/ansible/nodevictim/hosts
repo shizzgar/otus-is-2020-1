@@ -1,0 +1,2 @@
+[centos-servers]
+192.168.99.101  virtual_domain=mydomain.ozuevo.top

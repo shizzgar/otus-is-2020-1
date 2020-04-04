@@ -1,0 +1,36 @@
+---
+- hosts: all
+
+  remote_user: vagrant
+  become: yes
+  
+  vars:
+    - password1: '$1$otus$H73n7J9kEP9Uu7qtgrOeY.'
+    - password2: '$1$otus2$MJ7TrWnDWc4oHQ8S.dv3k0'
+    - password3: '$1$otus3$aPFnydto.zF7lp8DxS9350'
+
+    - nginx_host: 'localhost'
+    - nginx_user: nginx
+    - nginx_port: 8188
+    - virtual_domain: mydomain.ozuevo.top
+
+
+  roles:
+    - role: startup
+    - role: nginx
+    - role: selinux_setsebool
+      when: nginx_custom_port_selinux_mode == "selinux_setsebool"
+    - role: selinux_add_port_to_existing_type
+      when: nginx_custom_port_selinux_mode == "selinux_add_port_to_existing_type"
+    - role: selinux_semodule
+      when: nginx_custom_port_selinux_mode == "selinux_semodule"
+    - role: check_nginx_works_fine
+      
+
+
+
+
+
+
+          
+      

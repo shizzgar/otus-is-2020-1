@@ -1,0 +1,9 @@
+module bind-named-etc 1.0;
+
+require {
+    type etc_t;
+    type named_t;
+    class file { read write };
+}
+
+allow named_t etc_t : file { read write };

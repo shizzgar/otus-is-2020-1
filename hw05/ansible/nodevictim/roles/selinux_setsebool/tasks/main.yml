@@ -1,0 +1,22 @@
+---
+- name: set selinux flag nis_enabled to enable nonstandard port to listen
+  seboolean:
+    name: nis_enabled
+    state: yes
+    persistent: no
+
+- name: nginx restart to test setsebool
+  block:
+    - name: try to start nginx (setsebool)
+      service:
+        name: nginx
+        state: restarted    
+    - debug: 
+        msg: "nginx start OK (setsebool)"
+  rescue:
+    - debug:
+        msg: "nginx start FAILED (setsebool)"
+  
+
+
+    

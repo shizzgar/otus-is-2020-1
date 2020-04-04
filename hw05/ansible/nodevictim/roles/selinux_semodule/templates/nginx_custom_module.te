@@ -1,0 +1,20 @@
+module nginx_custom_module 1.0;
+
+type nginx_custom_port_t;
+
+require{
+    attribute port_type;
+};
+
+typeattribute nginx_custom_port_t port_type;
+
+#corenet_port(nginx_custom_port_t)
+
+require{
+    type httpd_t;
+    type nginx_custom_port_t;
+    class tcp_socket name_bind;
+};
+
+#=============== httpd_t===============
+allow httpd_t nginx_custom_port_t:tcp_socket name_bind;  

@@ -1,0 +1,24 @@
+---
+- name: Allow nginx to listen on tcp port 8188
+  seport:
+    ports: "{{ nginx_port }}"
+    proto: tcp
+    setype: http_port_t
+    state: present
+
+- name: nginx restart to test seport
+  block:
+    - name: try to start nginx (seport)
+      service:
+        name: nginx
+        state: restarted    
+    - debug: 
+        msg: "nginx start OK (seport)"
+  rescue:
+    - debug:
+        msg: "nginx start FAILED (seport)"
+    
+
+
+    
+    

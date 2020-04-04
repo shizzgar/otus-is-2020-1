@@ -1,0 +1,49 @@
+---
+- name: Install Nginx Web Server on Centos
+  yum:
+    name: nginx
+    state: latest
+  when:
+    ansible_os_family == "RedHat"
+  notify:
+    - nginx systemd
+
+- name: Replace nginx.conf
+  template:
+    src: templates/nginx.conf
+    dest: /etc/nginx/nginx.conf
+
+- name: Create home directory for www
+  file:
+    path: /var/www/{{ virtual_domain }}
+    state: directory
+
+- name: Add virtual domain for NGINX
+  template:
+    src: templates/nginx_vhosts.conf
+    dest: /etc/nginx/conf.d/{{ virtual_domain }}.conf
+  when:
+    ansible_os_family == "RedHat"
+  notify:
+    - nginx restart    
+
+- name: Replace nginx.conf
+  template:
+    src: templates/index.html
+    dest: /var/www/{{ virtual_domain }}/index.html
+  
+  
+- name: nginx start
+  block:
+    - name: try to start nginx
+      service:
+        name: nginx
+        state: started    
+    - debug: 
+        msg: "nginx start OK"
+  rescue:
+    - debug:
+        msg: "nginx start FAILED"
+
+  
+
