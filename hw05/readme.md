@@ -153,7 +153,7 @@ allow named_t etc_t : file { read write };
 
 и в процессе анализа, инженеру приходит гениальная по своей простоте идея (да, он скромен) - а что, если в конфигурации named для ddns содержится очепятка, и необходимо просто
 
-- в named.conf в дазделах для ddns поменять директорию, где размещается файл зоны с /etc/named/dynamic на /var/named/dynamic (см поправленный файл /part_ii/selinux_dns_problems/files/ns01/named.conf )
+- в named.conf в дазделах для ddns поменять директорию, где размещается файл зоны с /etc/named/dynamic на /var/named/dynamic (см поправленный файл /part_ii/selinux_dns_problems/provisioning/files/ns01/named.conf )
 
 ### Эпилог
 
