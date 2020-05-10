@@ -9,13 +9,13 @@
 Устанавливаем OSSIM (IP 192.168.16.69 gw 192.168.16.1)
 Конфигурируем eth1 - 10.0.0.5
 
-Создаем [vagrantfile] для metasploitable3 (образ rapid7/metasploitable3-ub1404, eth1 - internal network "netb" ip 10.0.0.51), запускаем vm
+Создаем [vagrantfile](https://github.com/shizzgar/otus-is-2020-1/blob/master/hw06/Vagrantfile) для metasploitable3 (образ rapid7/metasploitable3-ub1404, eth1 - internal network "netb" ip 10.0.0.51), запускаем vm
 
 Проводим первоначальные настройки в визарде вебинтерфейса ossim 
 Добавляем агента HIDS в менеджере агентов для asset'a 10.0.0.51, копируем ключ
 
 В vm metasplitable прописываем репозиторий ossec и устанавливаем агента HIDS. Запускаем менеджер агентов и устанавлмваем скопированный ранее ключ
-Перезапускаем сервисы ossec. В вебинтерфейсе ossim убеждаемся, что hids агент от metasploitable подключен (active). Скриншот прилагается.
+Перезапускаем сервисы ossec. В вебинтерфейсе ossim убеждаемся, что hids агент от metasploitable подключен (active). [Скриншот] прилагается.
 
 В вебинтерфейсе ossim создаем scan job (immediate) для сканера уязвимостей. Дожидаемся окончания сканирования (~40 мин)
 В отчете видим следующие уязвимости катерории high:
