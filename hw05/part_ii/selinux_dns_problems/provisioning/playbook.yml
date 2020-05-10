@@ -91,7 +91,7 @@
       group: named
       mode: 0670
 
-  - name: set /etc/named/dynamic permissions
+  - name: set /var/named/dynamic permissions
     file:
       path: /var/named/dynamic
       owner: root

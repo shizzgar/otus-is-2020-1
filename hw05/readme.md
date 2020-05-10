@@ -33,7 +33,7 @@ Vagrantfile
    Для изменения значения флага используется роль selinux_setsebool. 
 
    выполняем :
-
+   #cd part_ii/selinux_dns_problems
    #vagrant destroy --force && NGINX_CUSTOM_PORT_SELINUX_MODE=selinux_setsebool vagrant up --provision  
 
    в выводе vagrant получаем:
@@ -47,6 +47,7 @@ Vagrantfile
 
    выполняем :
 
+   #cd part_ii/selinux_dns_problems
    #vagrant destroy --force && NGINX_CUSTOM_PORT_SELINUX_MODE=selinux_add_port_to_existing_type vagrant up --provision  
 
    в выводе vagrant получаем:
@@ -61,6 +62,7 @@ Vagrantfile
 
    выполняем :
 
+   #cd part_ii/selinux_dns_problems
    #vagrant destroy --force && NGINX_CUSTOM_PORT_SELINUX_MODE=selinux_semodule vagrant up --provision  
 
    в выводе vagrant получаем:
