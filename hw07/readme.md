@@ -9,22 +9,24 @@
 
 1. Скачал исходники с github. распаковал в /opt/volatility 
 2. Сделал виртуальное окружение
-
+```bash
 mkdir venv
 python -m venv ./venv
 source ./venv/bin/activate
+```
 
 3. запустил установку пакета volatility
-
+```bash
 python setup.py install
-
+```
 4. скопировал профиль в ./volatility/plugins/overlays/linux
 
 5. распаковал дамп памяти в /mnt/data/otus/IS_2019_12/16/task1/memory.vmem
 
 6. запустил volatility с командой linux_pslist
-
+```bash
 (venv) djabber@xJabber:/opt/volalitily/volatility-master$ python2.7 vol.py -f /mnt/data/otus/IS_2019_12/16/task1/memory.vmem --profile=LinuxUbuntu_4_15_0-72-generic_profilex64 linux_pslist >b01   
+```
 
 результат - файл b01 со списком процессов. в списке процессов сразу бросается в глаза meterpreter - PID 1751 - боеголовка от MSF, и, соответственно sh (2964), который порождается этим процессом
 
@@ -38,16 +40,19 @@ Offset             Name                 Pid             PPid            Uid     
 ```
 7. запустил volatility с параметром linux_netscan 
 
+```bash
 (venv) djabber@xJabber:/opt/volalitily/volatility-master$ python2.7 vol.py -f /mnt/data/otus/IS_2019_12/16/task1/memory.vmem --profile=LinuxUbuntu_4_15_0-72-generic_profilex64 linux_netscan >b02
+```
 
 результат - файл b02 - в котором видно установленное соединение на  192.168.180.131:1337 (созвучно с 31337 - eleet :)) ) - что тоже наводит на мысли...
-```
+
+```bash
 8a9df81f6000 TCP      192.168.180.132 :51934 192.168.180.131 : 1337 ESTABLISHED    
 ```
 8. выполнил volatility - с параметром linux_netstat
 
 все сходится...
-```
+```bash
 TCP      192.168.180.132 :51934 192.168.180.131 : 1337 ESTABLISHED           meterpreter/1751 
 TCP      192.168.180.132 :51934 192.168.180.131 : 1337 ESTABLISHED                    sh/2964 
 ```
@@ -56,7 +61,7 @@ meterpreter патчит sh и запускает реверс-шелл..., чт
 Process: meterpreter Pid: 1751 Address: 0x400000 File: /
 Protection: VM_READ|VM_WRITE|VM_EXEC
 Flags: VM_READ|VM_WRITE|VM_EXEC|VM_MAYREAD|VM_MAYWRITE|VM_MAYEXEC|VM_DENYWRITE|VM_ACCOUNT|VM_CAN_NONLINEAR
-```
+```bash
 0x00000000400000  7f 45 4c 46 02 01 01 00 00 00 00 00 00 00 00 00   .ELF............
 0x00000000400010  02 00 3e 00 01 00 00 00 78 00 40 00 00 00 00 00   ..>.....x.@.....
 0x00000000400020  40 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   @...............
@@ -74,6 +79,7 @@ Flags: VM_READ|VM_WRITE|VM_EXEC|VM_MAYREAD|VM_MAYWRITE|VM_MAYEXEC|VM_DENYWRITE|V
 3. запустил volatility с командой linux_bash
 
 интерес вызвало вот это: устанавливаются права на странные файлы, стирается история, запускается процесс в фоне.
+```
 Pid      Name                 Command Time                   Command
 -------- -------------------- ------------------------------ -------
     1166 bash                 2018-04-15 15:24:47 UTC+0000   chown panda:panda ht0p 
@@ -82,24 +88,24 @@ Pid      Name                 Command Time                   Command
     1166 bash                 2018-04-15 15:24:55 UTC+0000   shred -u .bash_history 
     1166 bash                 2018-04-15 15:25:30 UTC+0000   ./ht0p \  &
     1166 bash                 2018-04-15 15:25:32 UTC+0000   htop
-
+```
 надо сдампить и посмотреть:
 
 (venv) djabber@xJabber:/opt/volalitily/volatility-master$ python2.7 vol.py -f /mnt/data/otus/IS_2019_12/16/task2/image --profile=Linuxubuntu16_04x64 linux_find_file -F "/home/panda/ht0p"
 
 получаем
-
+```
 Inode Number                  Inode File Path
 ---------------- ------------------ ---------
           390593 0xffff88007bd8e698 /home/panda/ht0p
-
+```
 узнали inode, далее, дампим
-
+```bash
 (venv) djabber@xJabber:/opt/volalitily/volatility-master$ python2.7 vol.py -f /mnt/data/otus/IS_2019_12/16/task2/image --profile=Linuxubuntu16_04x64 linux_find_file -i 0xffff88007bd8e698 -O ht0p
 
 chmod +x ./ht0p
 ./ht0p
-
+```
 не запускается. смотрим внутрь - файл забит нулями... а должен запускаться и выводить ключик... :( 
 
 дальше уж и не знаю, куда смотреть...
