@@ -91,7 +91,9 @@ Pid      Name                 Command Time                   Command
 ```
 надо сдампить и посмотреть:
 
+```bash
 (venv) djabber@xJabber:/opt/volalitily/volatility-master$ python2.7 vol.py -f /mnt/data/otus/IS_2019_12/16/task2/image --profile=Linuxubuntu16_04x64 linux_find_file -F "/home/panda/ht0p"
+```
 
 получаем
 ```
