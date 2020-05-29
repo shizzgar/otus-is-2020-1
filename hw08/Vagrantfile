@@ -1,0 +1,43 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+    Vagrant.configure("2") do |config|
+        config.vm.synced_folder '.', '/vagrant', disabled: true
+#        config.ssh.username = 'vagrant'
+#        config.ssh.password = 'vagrant'
+
+        config.vm.define "ub4" do |ub1404|
+          ub1404.vm.box = "ubuntu/bionic64"
+          ub1404.vm.hostname = "ub4"
+#          ub1404.vm.network "private_network", ip: '10.0.0.52'
+          ub1404.vm.network "public_network", ip:'192.168.16.234'
+
+          ub1404.vm.provider "virtualbox" do |v|
+            v.name = "ub4"
+            v.memory = 1024
+          end
+        end
+
+        config.vm.define "ub2" do |ub1404|
+          ub1404.vm.box = "ubuntu/bionic64"
+          ub1404.vm.hostname = "ub2"
+#          ub1404.vm.network "private_network", ip: '10.0.0.52'
+          ub1404.vm.network "public_network", ip:'192.168.16.232'
+
+          ub1404.vm.provider "virtualbox" do |v|
+            v.name = "ub2"
+            v.memory = 1024
+          end
+        end
+        config.vm.define "ub3" do |ub1404|
+          ub1404.vm.box = "ubuntu/bionic64"
+          ub1404.vm.hostname = "ub3"
+#          ub1404.vm.network "private_network", ip: '10.0.0.52'
+          ub1404.vm.network "public_network", ip:'192.168.16.233'
+
+          ub1404.vm.provider "virtualbox" do |v|
+            v.name = "ub3"
+            v.memory = 1024
+          end
+        end
+      end
