@@ -18,7 +18,7 @@
 
 # Active Response
 1. На хосте с wazuh в /var/ossec/etc/ossec/conf - нашел команду drop-firewall.
-2. Прописал в ossec.conf настройки active response - запуск команды  drop-firewall если сыграло правило 5712 брутфорс ssh - (см. [конфиг](artifacts/ossec.conf)).
+2. Прописал в ossec.conf настройки active response - запуск команды  drop-firewall на всех машинах с агентом, если сыграло правило 5712 брутфорс ssh (см. [конфиг](artifacts/ossec.conf)).
 3. Перезапустил сервисы wazuh на машине с менеджером. 
 4. На машине ub3 в двух терминалах запустил гидру:
 ```bash
@@ -51,7 +51,9 @@ hydra -V -f -t 4 -l test -P ./7-more-passwords.txt ssh://192.168.16.234
 5. В веб интерфейсе вазуха посмотрел Discovery panel для агентов ub232 и ub234 - увидел, что появились события - сработало правило 5710 - попытка залогиниться с несуществующим пользователем (см [скриншот](artifacts/screenshot-5710.png)). Через некоторое время появились события 5712 - брутфорс ssh (см [скриншот](artifacts/screenshot-5712.png)).
 6. Посмотрел логи [active-responses.log](artifacts/active-responses_log) на агентах. Увидел, что команда firewall-drop сработала для ip 192.168.16.233 от правила 5712. 
 ```
-возможно, из-за того, что версия вазуха - слишком новая - 3.12.3 - команда поначалу не срабатывала, в ossec.log сыпались ошибки - не найден файл ar.conf и передана неверная команда *firewall-drop900* . Видимо, по какой-то причине на агент не перадавался файл ar.conf с менеджера. Создал руками на агентских виртуалках ar.conf - как копию ar.conf в менеджере и всё заработало.
+Команда поначалу не срабатывала, в ossec.log сыпались ошибки - "не найден файл ar.conf" и "передана неверная команда *firewall-drop900*" . 
+Видимо, по какой-то причине на агент не перадавался файл ar.conf с менеджера. 
+Как workaround - создал руками на агентских виртуалках ar.conf - как копию ar.conf в менеджере и всё заработало.
 ```
 7. Посмотрел вывод iptables -L на машинах с агентами - правило для фаервола создается. :
 ```bash
@@ -83,3 +85,22 @@ Chain OUTPUT (policy ACCEPT)
 target     prot opt source               destination         
 root@ub2:/var/ossec/logs# 
 ```
+
+
+# Who-data
+
+0. Установил и включил auditd на агентских машинах
+1. Включил в агентских конфигах [ossec.conf](artifacts/ub234/ossec.conf) в разделах syscheck атрибуты check_all и whodata в тегах directories
+2. Перезапустил сервисы ossec на агентах
+3. Проверил - появилось ли правило auditd на контроль записи в папки /etc, /bin etc.
+```bash
+root@ub4:/var/ossec/bin# auditctl -l | grep wazuh_fim
+-w /etc -p wa -k wazuh_fim
+-w /usr/bin -p wa -k wazuh_fim
+-w /usr/sbin -p wa -k wazuh_fim
+-w /bin -p wa -k wazuh_fim
+-w /sbin -p wa -k wazuh_fim
+-w /boot -p wa -k wazuh_fim
+```
+4. сделал на машине ub4 sudo из-под пользователя vagrant. создал скрытый файл .hidden в директории /etc
+5. В веб-интерфейсе вазуха в разделе security events по агенту ub4 фильтром по syscheck.event=added нашел запись о событии добавления файла в контролируемую директорию. rule.id=554. в этой записи видно, что syscheck.audit.login_user.name=vagrant, т.е. файл был создан пользователем vagrant (см [скриншот](artifacts/screenshot-who-data.png))
