@@ -1,0 +1,379 @@
+--------------------------------------------------
+o")~   Snort++ 3.0.1-4
+--------------------------------------------------
+Loading /usr/local/etc/snort/snort.lua:
+Loading snort_defaults.lua:
+Finished snort_defaults.lua:
+Loading file_magic.lua:
+Finished file_magic.lua:
+	ssh
+	host_cache
+	pop
+	so_proxy
+	stream_tcp
+	smtp
+	gtp_inspect
+	packets
+	dce_http_proxy
+	stream_icmp
+	normalizer
+	ftp_server
+	stream_udp
+	search_engine
+	ips
+	dce_smb
+	latency
+	binder
+	wizard
+	appid
+	file_id
+	ftp_data
+	port_scan
+	dce_http_server
+	modbus
+	dce_tcp
+	host_tracker
+	telnet
+	ssl
+	sip
+	rpc_decode
+	http_inspect
+	back_orifice
+	stream_user
+	stream_ip
+	network
+	classifications
+	dnp3
+	active
+	ftp_client
+	hosts
+	process
+	daq
+	decode
+	alerts
+	trace
+	stream
+	references
+	arp_spoof
+	output
+	dns
+	dce_udp
+	imap
+	stream_file
+Finished /usr/local/etc/snort/snort.lua:
+Loading ips.rules:
+Loading ../rules/local.rules:
+Finished ../rules/local.rules:
+Finished ips.rules:
+--------------------------------------------------
+rule counts
+       total rules loaded: 1
+               text rules: 1
+            option chains: 1
+            chain headers: 1
+--------------------------------------------------
+port rule counts
+             tcp     udp    icmp      ip
+     dst       1       0       0       0
+   total       1       0       0       0
+--------------------------------------------------
+ips policies
+              id   rules enabled    file
+               0               1    /usr/local/etc/snort/snort.lua
+--------------------------------------------------
+service rule counts          to-srv  to-cli
+                     http:        1       0
+                    http2:        1       0
+                    total:        2       0
+--------------------------------------------------
+fast pattern service groups  to-srv  to-cli
+                      key:        2       0
+--------------------------------------------------
+search engine
+                instances: 2
+                 patterns: 2
+            pattern chars: 42
+               num states: 42
+         num match states: 2
+             memory scale: KB
+             total memory: 3.23438
+           pattern memory: 0.117188
+        match list memory: 0.390625
+        transition memory: 2.47656
+--------------------------------------------------
+pcap DAQ configured to read-file.
+Commencing packet processing
+++ [0] /home/vagrant/pcaps/2020-03-14-traffic-analysis-exercise.pcap
+03/12-00:36:45.820456 [**] [1:1000060715:1] "MALWARE-CNC TROJAN download attempt" [**] [Classification: A Network Trojan was detected] [Priority: 1] [AppID: HTTP] {TCP} 10.3.11.194:49816 -> 64.44.133.131:80
+-- [0] /home/vagrant/pcaps/2020-03-14-traffic-analysis-exercise.pcap
+--------------------------------------------------
+Packet Statistics
+--------------------------------------------------
+daq
+                    pcaps: 1
+                 received: 30239
+                 analyzed: 30239
+                    allow: 25251
+                whitelist: 4988
+                 rx_bytes: 21325473
+--------------------------------------------------
+codec
+                    total: 30239       	(100.000%)
+                      eth: 30239       	(100.000%)
+                     igmp: 37          	(  0.122%)
+                     ipv4: 30239       	(100.000%)
+                      tcp: 28618       	( 94.639%)
+                      udp: 1584        	(  5.238%)
+--------------------------------------------------
+Module Statistics
+--------------------------------------------------
+appid
+                  packets: 30239
+        processed_packets: 30231
+          ignored_packets: 8
+           total_sessions: 1636
+            appid_unknown: 944
+       service_cache_adds: 169
+--------------------------------------------------
+back_orifice
+                  packets: 1584
+--------------------------------------------------
+binder
+                  packets: 1598
+                 inspects: 1598
+--------------------------------------------------
+dce_smb
+                 sessions: 54
+                  packets: 44
+ max_outstanding_requests: 1
+             smbv2_create: 78
+              smbv2_write: 42
+               smbv2_read: 66
+       smbv2_tree_connect: 48
+    smbv2_tree_disconnect: 47
+              smbv2_close: 66
+  max_concurrent_sessions: 18
+--------------------------------------------------
+dce_tcp
+                     pdus: 455
+                    binds: 41
+                bind_acks: 41
+           alter_contexts: 33
+  alter_context_responses: 33
+                 requests: 157
+                responses: 150
+             tcp_sessions: 41
+              tcp_packets: 455
+  max_concurrent_sessions: 16
+--------------------------------------------------
+detection
+                 analyzed: 30239
+             key_searches: 75
+             total_alerts: 1
+                   logged: 1
+--------------------------------------------------
+dns
+                  packets: 748
+                 requests: 421
+                responses: 327
+--------------------------------------------------
+file_id
+              total_files: 62
+          total_file_data: 6172764
+     max_concurrent_files: 1
+--------------------------------------------------
+http_inspect
+                    flows: 194
+                    scans: 6777
+              reassembles: 6627
+              inspections: 2182
+                 requests: 70
+                responses: 70
+             get_requests: 65
+            post_requests: 5
+           request_bodies: 5
+                  chunked: 7
+       uri_normalizations: 4
+  max_concurrent_sessions: 29
+--------------------------------------------------
+latency
+            total_packets: 39827
+              total_usecs: 290843
+                max_usecs: 692
+         total_rule_evals: 1
+--------------------------------------------------
+normalizer
+        test_tcp_trim_win: 55
+--------------------------------------------------
+port_scan
+                  packets: 30239
+                 trackers: 169
+--------------------------------------------------
+search_engine
+               max_queued: 1
+            total_flushed: 1
+            total_inserts: 1
+             total_unique: 1
+         qualified_events: 1
+           searched_bytes: 4727
+--------------------------------------------------
+ssl
+                  packets: 5467
+                  decoded: 5467
+             client_hello: 347
+             server_hello: 347
+              certificate: 278
+              server_done: 877
+      client_key_exchange: 279
+      server_key_exchange: 276
+            change_cipher: 683
+       client_application: 938
+       server_application: 3108
+                    alert: 40
+     unrecognized_records: 299
+     handshakes_completed: 210
+         sessions_ignored: 242
+       detection_disabled: 36
+  max_concurrent_sessions: 209
+--------------------------------------------------
+stream
+                    flows: 1598
+             total_prunes: 9
+              idle_prunes: 9
+--------------------------------------------------
+stream_ip
+                 sessions: 3
+                      max: 3
+                  created: 3
+                 released: 6
+                 timeouts: 3
+              total_bytes: 688
+--------------------------------------------------
+stream_tcp
+                 sessions: 1172
+                      max: 1172
+                  created: 1172
+                 released: 1006
+                 timeouts: 507
+             instantiated: 485
+                   setups: 1172
+                 restarts: 450
+                 discards: 39
+             syn_trackers: 656
+            data_trackers: 350
+              segs_queued: 15199
+            segs_released: 15199
+                segs_used: 14966
+          rebuilt_packets: 9588
+            rebuilt_bytes: 15445225
+          client_cleanups: 49
+          server_cleanups: 278
+                  closing: 29
+                     syns: 667
+                 syn_acks: 642
+                   resets: 316
+                     fins: 686
+      inspector_fallbacks: 1
+        partial_fallbacks: 225
+--------------------------------------------------
+stream_udp
+                 sessions: 423
+                      max: 423
+                  created: 458
+                 released: 458
+                 timeouts: 35
+              total_bytes: 396056
+--------------------------------------------------
+wizard
+                tcp_scans: 1803
+                 tcp_hits: 460
+                udp_scans: 836
+--------------------------------------------------
+Appid Statistics
+--------------------------------------------------
+detected apps and services
+              Application: Flows      Clients    Users      Payloads   Misc       Incompat.  Failed    
+                     bing: 0          0          0          12         0          0          0         
+              google_apis: 0          0          0          7          0          0          0         
+                   google: 0          0          0          7          0          0          0         
+                   yahoo!: 0          0          0          1          0          0          0         
+                   chrome: 0          1          0          0          0          0          0         
+                  dce/rpc: 32         3          0          0          0          0          0         
+                      dns: 325        325        0          0          0          0          0         
+                 facebook: 0          0          0          7          0          0          0         
+                     http: 44         0          0          0          0          0          0         
+        internet_explorer: 0          16         0          0          0          0          0         
+                 kerberos: 4          78         0          0          0          0          0         
+                     ldap: 54         0          23         0          0          0          0         
+                 linkedin: 0          0          0          1          0          0          0         
+         microsoft_update: 0          0          0          8          0          0          0         
+              netbios-dgm: 0          17         0          0          0          0          0         
+               netbios-ns: 0          9          0          0          0          0          0         
+        netbios-ssn_(smb): 18         0          0          0          0          0          0         
+                   newegg: 0          0          0          4          0          0          0         
+                      ntp: 4          0          0          0          0          0          0         
+                      ssl: 9          0          0          0          0          0          0         
+                  twitter: 0          0          0          3          0          0          0         
+                    https: 275        0          0          0          0          0          0         
+               ssl_client: 0          171        0          0          0          0          0         
+              doubleclick: 0          0          0          3          0          0          0         
+                 pubmatic: 0          0          0          1          0          0          0         
+      amazon_web_services: 0          0          0          1          0          0          0         
+               cloudfront: 0          0          0          5          0          0          0         
+                microsoft: 0          0          0          91         0          0          0         
+                  addthis: 0          0          0          1          0          0          0         
+                 t_mobile: 0          0          0          1          0          0          0         
+                     mdns: 8          0          0          0          0          0          0         
+          microsoft_azure: 0          0          0          2          0          0          0         
+      microsoft_cryptoapi: 0          4          0          0          0          0          0         
+               google_ads: 0          0          0          1          0          0          0         
+          rubicon_project: 0          0          0          1          0          0          0         
+          improve_digital: 0          0          0          1          0          0          0         
+              google_play: 0          0          0          1          0          0          0         
+                 monetate: 0          0          0          5          0          0          0         
+                  exelate: 0          0          0          2          0          0          0         
+           smart_adserver: 0          0          0          2          0          0          0         
+               office_365: 0          0          0          6          0          0          0         
+microsoft_windows_live_se: 0          0          0          5          0          0          0         
+         as_server_mapper: 29         0          0          0          0          0          0         
+                    epmap: 19         19         0          0          0          0          0         
+                  ddm_dfm: 7          0          0          0          0          0          0         
+ microsoft_global_catalog: 3          0          0          0          0          0          0         
+                     igmp: 6          0          0          0          0          0          0         
+  microsoft_visual_studio: 0          0          0          6          0          0          0         
+            edge_chromium: 0          19         0          0          0          0          0         
+--------------------------------------------------
+File Statistics
+--------------------------------------------------
+file type stats (files)
+         Type              Download   Upload 
+       MSEXE( 21)          4          0          
+         PNG( 69)          6          0          
+        JPEG( 70)          14         0          
+        JPEG(157)          4          0          
+            Total          28         0          
+--------------------------------------------------
+file type stats (bytes)
+         Type              Download   Upload 
+       MSEXE( 21)          2213888    0          
+         PNG( 69)          37120      0          
+        JPEG( 70)          3384901    0          
+        JPEG(157)          272193     0          
+            Total          5908102    0          
+--------------------------------------------------
+file signature stats
+         Type              Download   Upload 
+       MSEXE( 21)          4          0          
+         PNG( 69)          6          0          
+        JPEG( 70)          14         0          
+        JPEG(157)          4          0          
+            Total          28         0          
+--------------------------------------------------
+Summary Statistics
+--------------------------------------------------
+timing
+                  runtime: 00:00:00
+                  seconds: 0.432951
+                 pkts/sec: 30239
+                Mbits/sec: 162
+o")~   Snort exiting
