@@ -3,9 +3,6 @@
 
 ДЗ 10 - Шифрование, LUKS
 -----------------------------------------------
-
-# Развертывание стенда
-
 0. Поднял виртуалку Ubutu 18.04 - ub2 - virtualbox - (см [Vagrantfile](Vagrantfile)), зашел в терминал
 1. Сгенерил ключевой файл [enc.key](enc.key):
 ```bash
@@ -15,6 +12,7 @@ vagrant@ub2:~$ dd if=/dev/urandom of=~/enc.key bs=1 count=4096
 4096 bytes (4.1 kB, 4.0 KiB) copied, 0.0107308 s, 382 kB/s
 ```
 2. Создаем криптоконтейнер на основе ключа:
+
 2.1. Создаем пустой файл fs.img, 10М:
 ```bash
 vagrant@ub2:~$ dd if=/dev/zero of=./fs.img bs=1M count=10
@@ -39,6 +37,7 @@ Are you sure? (Type uppercase yes): YES
 ```
 
 3. Отрываю криптоконтейнер ключем enc.key
+
 3.1. открываем контейнер
 ```bash
 vagrant@ub2:~$ sudo cryptsetup luksOpen /dev/loop0 dj_crypt -d ~/enc.key
@@ -110,6 +109,7 @@ drwx------ 2 root    root     12K Jun  6 15:32 lost+found
 ```
 
 8. Создал доп. ключ
+
 8.1. Создал еще один ключевой файл
 ```bash
 vagrant@ub2:~$ dd if=/dev/urandom of=~/another.key bs=1 count=4096
